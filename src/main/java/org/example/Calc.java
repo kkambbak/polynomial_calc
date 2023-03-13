@@ -1,18 +1,45 @@
 package org.example;
 
 
-public class Calc{
+import java.util.*;
+
+public class Calc {
     public static int run(String exp) {
-        exp = exp.replaceAll("- ","+ -");
+        boolean needToMultifly = exp.contains("*");
+        boolean needToPlus = exp.contains("+") || exp.contains("-");
 
-        String[] bits = exp.split(" \\+ ");
+        boolean needToCompound = needToMultifly && needToPlus;
 
-        int result = 0;
+        if ( needToCompound ) {
+            String[] bits = exp.split(" \\+ ");
 
-        for (String s : bits) {
-            result += Integer.parseInt(s);
+            return Integer.parseInt(bits[0]) + run(bits[1]);
+        }
+        else if ( needToPlus ) {
+            exp = exp.replaceAll("- ", "+ -");
+
+            String[] bits = exp.split(" \\+ ");
+
+            int sum = 0;
+
+            for (int i = 0; i < bits.length; i++) {
+                sum += Integer.parseInt(bits[i]);
+            }
+
+            return sum;
+        }
+        else if ( needToMultifly ) {
+            String[] bits = exp.split(" \\* ");
+
+            int sum = 1;
+
+            for (int i = 0; i < bits.length; i++) {
+                sum *= Integer.parseInt(bits[i]);
+            }
+
+            return sum;
         }
 
-        return result;
+        throw new RuntimeException("올바른 계산식이 아닙니다.");
     }
 }
